@@ -1,18 +1,24 @@
 import type { GetServerSideProps, NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
+import { http } from '../utils/http'
+import { Produtos } from '../utils/models'
 
-const Home: NextPage = (props) => {
+type HomeProps = {
+  produtos: Produtos[]
+}
+const Home: NextPage<HomeProps> = ({produtos}) => {
 
 
   return (
     <div>
-      <h1>Eccomerce full cycle</h1> {props.name}
+      <h1>Eccomerce full cycle</h1>
       <ul>
-        <li>
-          <label htmlFor="">Nome: produto 1</label>
-          <a href="#">Ver</a>
+        {produtos.map((produto, key) => (
+          <li key={key}>
+            <label htmlFor="">Nome:</label>
+            {produto.nome} |
+            <a href="#">Ver</a>
           </li>
+        ))}
       </ul>
     </div>
   )
@@ -21,9 +27,12 @@ const Home: NextPage = (props) => {
 export default Home
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+
+  const {data: produtos} = await http.get("produtos");
+
   return {
     props: {
-      name: 'product 1'
+      produtos
     }
   };
 };
